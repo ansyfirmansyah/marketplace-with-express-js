@@ -5,6 +5,7 @@ const path = require('path');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const errorController = require('./controllers/error');
+const sequelize = require('./util/database');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -16,5 +17,13 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(errorController.notfound);
 
-const port = 3130;
-app.listen(port, () => console.log(`Listening on port ${port}`));
+sequelize.sync()
+    .then((res) => {
+      const port = 3130;
+      app.listen(port, () => console.log(`Listening on port ${port}`));
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+
+
