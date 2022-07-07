@@ -2,6 +2,7 @@
 /* eslint-disable require-jsdoc */
 const fs = require('fs');
 const path = require('path');
+const Cart = require('./cart');
 
 const p = path.join(
     path.dirname(require.main.filename),
@@ -11,7 +12,7 @@ const p = path.join(
 
 const getProductsFromFile = (callback) => {
   fs.readFile(p, (err, fileContent) => {
-    if (err) {
+    if (err || fileContent == '') {
       callback([]);
     } else {
       callback(JSON.parse(fileContent));
@@ -64,10 +65,11 @@ module.exports = class Product {
 
   static deleteById(id) {
     getProductsFromFile((products) => {
+      const product = products.find((p) => p.id === id);
       const updatedProducts = products.filter((p) => p.id !== id);
       fs.writeFile(p, JSON.stringify(updatedProducts), (err) => {
         if (!err) {
-          //
+          Cart.deleteProduct(id, product.price);
         };
       });
     });
