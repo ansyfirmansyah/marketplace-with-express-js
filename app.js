@@ -10,8 +10,8 @@ const Product = require('./models/product');
 const User = require('./models/user');
 const Cart = require('./models/cart');
 const CartItem = require('./models/cart-item');
-// const Order = require('./models/order');
-// const OrderItem = require('./models/order-item');
+const Order = require('./models/order');
+const OrderItem = require('./models/order-item');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -45,6 +45,12 @@ Cart.belongsTo(User);
 // Cart to Product relation: Many to Many, using CartItem as a middle table
 Cart.belongsToMany(Product, {through: CartItem});
 Product.belongsToMany(Cart, {through: CartItem});
+// User to Order relation: One to Many
+Order.belongsTo(User, {constraints: true, onDelete: 'CASCADE'});
+User.hasMany(Order);
+// Order to Product relation: Many to Many, using OrderItem as a middle table
+Order.belongsToMany(Product, {through: OrderItem});
+Product.belongsToMany(Order, {through: OrderItem});
 
 sequelize
     // .sync({force: true})
