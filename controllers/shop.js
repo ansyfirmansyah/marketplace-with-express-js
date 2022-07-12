@@ -43,7 +43,6 @@ exports.getCart = (req, res, next) => {
         return cart.getProducts();
       })
       .then((products) => {
-        console.log('products>> ', products);
         res.render('shop/cart', {
           pageTitle: 'Your Cart',
           path: '/cart',
