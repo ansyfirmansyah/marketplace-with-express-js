@@ -22,11 +22,15 @@ app.use((req, res, next) => {
           const user = new User('ansy', 'ansy@test.com');
           user.save()
               .then((user) => {
-                req.user = user;
+                req.user = new User(user.name, user.email, user._id, user.cart);
                 next();
               });
         } else {
-          req.user = users[0];
+          req.user = new User(
+              users[0].name,
+              users[0].email,
+              users[0]._id,
+              users[0].cart);
           next();
         }
       });
