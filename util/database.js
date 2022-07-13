@@ -6,10 +6,10 @@ let _db;
 
 const mongoConnect = (callback) => {
   MongoClient
-      .connect(`mongodb+srv://ansy:eONuRrahSywyYOnB@cluster0.2fteu.mongodb.net/?retryWrites=true&w=majority`)
+      .connect(process.env.MONGO_URL)
       .then((client) => {
         console.log('Mongodb Connected!');
-        _db = client.db('shop');
+        _db = client.db(process.env.MONGO_DB);
         callback();
       })
       .catch((err) => {
