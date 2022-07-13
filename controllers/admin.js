@@ -14,6 +14,8 @@ exports.postAddProduct = (req, res, next) => {
       req.body.price,
       req.body.imageUrl,
       req.body.description,
+      null,
+      req.user._id,
   );
   product.save()
       .then(() => res.redirect('/'))
@@ -47,6 +49,7 @@ exports.postEditProduct = (req, res, next) => {
       req.body.imageUrl,
       req.body.description,
       req.body.productId,
+      req.user._id,
   );
   product.save()
       .then(() => {
