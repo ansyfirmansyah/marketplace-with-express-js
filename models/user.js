@@ -29,6 +29,32 @@ const userSchema = new Schema({
   },
 });
 
+userSchema.methods.addToCart = function(product) {
+  let updatedCartItems = [];
+  let cartProductIndex = null;
+  if (this.cart) {
+    updatedCartItems = [...this.cart.items];
+    cartProductIndex = this.cart.items.findIndex((cp) => {
+      return cp.productId.toString() === product._id.toString();
+    });
+  }
+  if (cartProductIndex != null && cartProductIndex >= 0) {
+    updatedCartItems[cartProductIndex].quantity = updatedCartItems[cartProductIndex].quantity + 1;
+  } else {
+    updatedCartItems.push({productId: product._id, quantity: 1});
+  }
+  this.cart = {items: updatedCartItems};
+  return this.save();
+};
+
+userSchema.methods.deleteItemFromCart = function(productId) {
+  const updatedCartItems = this.cart.items.filter((i) => {
+    return i._id.toString() != productId.toString();
+  });
+  this.cart = {items: updatedCartItems};
+  return this.save();
+};
+
 // class User {
 //   constructor(username, email, id, cart) {
 //     this.name = username;
