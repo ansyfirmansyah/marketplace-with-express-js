@@ -15,7 +15,7 @@ exports.postAddProduct = (req, res, next) => {
     imageUrl: req.body.imageUrl,
     description: req.body.description,
     // null,
-    // req.user._id,
+    userId: req.user,
   });
   product.save()
       .then(() => res.redirect('/admin/products'))
@@ -68,6 +68,9 @@ exports.postDeleteProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
   Product.find()
+      // .select('title') // jika ingin select field tertentu
+      // .select('-title') // jika ingin select tanpa field tertentu
+      // .populate('userId') // jika ingin relasi object terkait muncul
       .then((products) => {
         res.render('admin/products', {
           prods: products,
