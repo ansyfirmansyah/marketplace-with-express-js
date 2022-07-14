@@ -18,7 +18,7 @@ exports.postAddProduct = (req, res, next) => {
       req.user._id,
   );
   product.save()
-      .then(() => res.redirect('/'))
+      .then(() => res.redirect('/admin/products'))
       .catch((err) => console.error(err));
 };
 

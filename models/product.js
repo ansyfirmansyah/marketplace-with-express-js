@@ -48,8 +48,8 @@ class Product {
           _id: new ObjectId(id),
         })
         .next()
-        .then((products) => {
-          return products;
+        .then((product) => {
+          return product;
         })
         .catch((err) => {
           console.error(err);
