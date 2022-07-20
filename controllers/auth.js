@@ -18,29 +18,31 @@ exports.getSignup = (req, res, next) => {
 };
 
 exports.postLogin = (req, res, next) => {
-  User.findOne()
-      .then((user) => {
-        if (!user) {
-          const user = new User({
-            name: 'ansy',
-            email: 'ansy@test.com',
-            cart: {
-              items: [],
-            },
-          });
-          user.save()
-              .then((user) => {
-                req.session.user = user;
-              });
-        } else {
-          req.session.user = user;
-        }
+  const email = req.body.email;
+  const password = req.body.password;
+  User.findOne({
+    email: email,
+  }).then((user) => {
+    if (!user) {
+      return res.redirect('/login');
+    }
+    return bcrypt.compare(password, user.password).then((valid) => {
+      if (valid) {
+        req.session.user = user;
         req.session.isLoggedIn = true;
-        req.session.save((err) => {
-          console.error(err);
-          res.redirect('/');
+        return req.session.save((err) => {
+          if (err) {
+            console.error(err);
+          }
+          return res.redirect('/');
         });
-      });
+      }
+      return res.redirect('/login');
+    }).catch((err) => {
+      console.error(err);
+      return null;
+    });
+  });
 };
 
 exports.postSignup = (req, res, next) => {
@@ -72,7 +74,9 @@ exports.postSignup = (req, res, next) => {
 
 exports.postLogout = (req, res, next) => {
   req.session.destroy((err) => {
-    console.error(err);
+    if (err) {
+      console.error(err);
+    }
     res.redirect('/');
   });
 };
