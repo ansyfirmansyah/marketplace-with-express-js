@@ -143,3 +143,57 @@ exports.postReset = (req, res, next) => {
         .catch((err) => console.error(err));
   });
 };
+
+exports.getNewPassword = (req, res, next) => {
+  const token = req.params.token;
+  User
+      .findOne({
+        resetToken: token,
+        resetTokenExpiration: {
+          $gt: Date.now(),
+        },
+      })
+      .then((user) => {
+        if (!user) {
+          return res.redirect('/404');
+        }
+        return res.render('auth/new-password', {
+          pageTitle: 'Update Password',
+          path: '/new-password',
+          errorMessage: req.flash('error'),
+          user: user,
+          resetToken: token,
+        });
+      })
+      .catch((err) => console.error(err));
+};
+
+exports.postNewPassword = (req, res, next) => {
+  const newPassword = req.body.password;
+  const userId = req.body.userId;
+  const resetToken = req.body.resetToken;
+  let resetUser;
+
+  User
+      .findOne({
+        resetToken: resetToken,
+        resetTokenExpiration: {
+          $gt: Date.now(),
+        },
+        _id: userId,
+      })
+      .then((user) => {
+        resetUser = user;
+        return bcrypt.hash(newPassword, 12);
+      })
+      .then((hashedPassword) => {
+        if (resetUser) {
+          resetUser.password = hashedPassword;
+          resetUser.resetToken = undefined;
+          resetUser.resetTokenExpiration = undefined;
+          resetUser.save();
+        }
+        return res.redirect('/login');
+      })
+      .catch((err) => console.error(err));
+};
