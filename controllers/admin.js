@@ -45,20 +45,26 @@ exports.postEditProduct = (req, res, next) => {
   const productId = req.body.productId;
   Product.findById(productId)
       .then((product) => {
+        if (product.userId.toString() !== req.user._id.toString()) {
+          return res.redirect('/');
+        }
         product.title = req.body.title;
         product.price = req.body.price;
         product.imageUrl = req.body.imageUrl;
         product.description = req.body.description;
-        return product.save();
-      })
-      .then(() => {
-        res.redirect('/admin/products');
+        return product.save()
+            .then(() => {
+              res.redirect('/admin/products');
+            });
       })
       .catch((err) => console.error(err)); ;
 };
 
 exports.postDeleteProduct = (req, res, next) => {
-  Product.findByIdAndRemove(req.body.productId)
+  Product.deleteOne({
+    _id: req.body.productId,
+    userId: req.user._id,
+  })
       .then(() => {
         res.redirect('/admin/products');
       })
@@ -66,7 +72,9 @@ exports.postDeleteProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.find()
+  Product.find({
+    userId: req.user._id,
+  })
       // .select('title') // jika ingin select field tertentu
       // .select('-title') // jika ingin select tanpa field tertentu
       // .populate('userId') // jika ingin relasi object terkait muncul
