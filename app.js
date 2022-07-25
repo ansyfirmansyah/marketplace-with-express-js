@@ -61,7 +61,7 @@ app.use(errorController.notfound);
 mongoose.connect(process.env.MONGO_URL)
     .then((result) => {
       console.log('Database connected!');
-      const port = 3130;
+      const port = process.env.APP_PORT;
       app.listen(port, () => console.log(`Listening on port ${port}`));
     })
     .catch((err) => console.error(err));

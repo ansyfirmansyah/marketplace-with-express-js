@@ -10,5 +10,7 @@ routes.get('/signup', authorizationController.getSignup);
 routes.post('/login', authorizationController.postLogin);
 routes.post('/signup', authorizationController.postSignup);
 routes.post('/logout', authorizationController.postLogout);
+routes.get('/reset', authorizationController.getReset);
+routes.post('/reset', authorizationController.postReset);
 
 module.exports = routes;
