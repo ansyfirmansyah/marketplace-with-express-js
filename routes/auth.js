@@ -6,6 +6,7 @@ const {check, body} = require('express-validator');
 const routes = express.Router();
 
 const authorizationController = require('../controllers/auth');
+const User = require('../models/user');
 
 const validatePassword = () => {
   return body(
@@ -34,6 +35,20 @@ const validateEmail = () => {
       .withMessage('Invalid Email.');
 };
 
+const validateExistingEmail = () => {
+  return check(
+      'email')
+      .custom(async (value) => {
+        const user = await User.findOne({
+          email: value,
+        });
+        if (user) {
+          return Promise.reject(
+              new Error('Email already in use.'));
+        }
+      });
+};
+
 routes.get('/login', authorizationController.getLogin);
 routes.get('/signup', authorizationController.getSignup);
 routes.post('/login',
@@ -44,6 +59,7 @@ routes.post('/signup',
     validateEmail(),
     validatePassword(),
     validateConfirmPassword(),
+    validateExistingEmail(),
     authorizationController.postSignup,
 );
 routes.post('/logout', authorizationController.postLogout);

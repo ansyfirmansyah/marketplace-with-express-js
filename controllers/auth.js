@@ -79,35 +79,26 @@ exports.postSignup = (req, res, next) => {
   }
   const email = req.body.email;
   const password = req.body.password;
-  // const confirmPassword = req.body.confirmPassword;
-  User.findOne({
-    email: email,
-  }).then((user) => {
-    if (user) {
-      return null;
-    }
-    return bcrypt.hash(password, 12).then((hashPassword) => {
-      const newUser = new User({
-        email: email,
-        password: hashPassword,
-        cart: {items: []},
-      });
-      return newUser.save();
-    });
-  }).then((data) => {
-    if (!data) {
-      req.flash('error', 'Email already in use.');
-      res.redirect('/signup');
-    } else {
-      res.redirect('/login');
-      return transporter.sendMail({
-        to: email,
-        from: process.env.SENGRIP_SENDER_MAIL,
-        subject: 'Signup succeeded',
-        html: '<h1>You successfully signed up!</h1>',
-      });
-    }
-  }).catch((err) => console.error(err));
+
+  return bcrypt.hash(password, 12)
+      .then((hashPassword) => {
+        const newUser = new User({
+          email: email,
+          password: hashPassword,
+          cart: {items: []},
+        });
+        return newUser.save();
+      })
+      .then((user) => {
+        res.redirect('/login');
+        return transporter.sendMail({
+          to: email,
+          from: process.env.SENGRIP_SENDER_MAIL,
+          subject: 'Signup succeeded',
+          html: '<h1>You successfully signed up!</h1>',
+        });
+      })
+      .catch((err) => console.error(err));
 };
 
 exports.postLogout = (req, res, next) => {
