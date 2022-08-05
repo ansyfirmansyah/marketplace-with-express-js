@@ -18,6 +18,7 @@ exports.getLogin = (req, res, next) => {
     path: '/login',
     errorMessage: req.flash('error'),
     oldInput: null,
+    validationErrors: [],
   });
 };
 
@@ -27,6 +28,7 @@ exports.getSignup = (req, res, next) => {
     pageTitle: 'Signup',
     errorMessage: req.flash('error'),
     oldInput: null,
+    validationErrors: [],
   });
 };
 
@@ -39,6 +41,7 @@ exports.postLogin = (req, res, next) => {
           pageTitle: 'Login',
           errorMessage: errors.array(),
           oldInput: req.body,
+          validationErrors: errors.array(),
         });
   }
   const email = req.body.email;
@@ -47,8 +50,17 @@ exports.postLogin = (req, res, next) => {
     email: email,
   }).then((user) => {
     if (!user) {
-      req.flash('error', 'Invalid email or password.');
-      return res.redirect('/login');
+      // req.flash('error', 'Invalid email or password.');
+      // return res.redirect('/login');
+
+      return res.status(422)
+          .render('auth/login', {
+            path: '/login',
+            pageTitle: 'Login',
+            errorMessage: [{msg: 'Invalid email or password.'}],
+            oldInput: req.body,
+            validationErrors: [{param: 'email'}, {param: 'password'}],
+          });
     }
     return bcrypt.compare(password, user.password).then((valid) => {
       if (valid) {
@@ -61,8 +73,16 @@ exports.postLogin = (req, res, next) => {
           return res.redirect('/');
         });
       }
-      req.flash('error', 'Invalid email or password.');
-      return res.redirect('/login');
+      // req.flash('error', 'Invalid email or password.');
+      // return res.redirect('/login');
+      return res.status(422)
+          .render('auth/login', {
+            path: '/login',
+            pageTitle: 'Login',
+            errorMessage: [{msg: 'Invalid email or password.'}],
+            oldInput: req.body,
+            validationErrors: [{param: 'email'}, {param: 'password'}],
+          });
     }).catch((err) => {
       console.error(err);
       return null;
@@ -79,6 +99,7 @@ exports.postSignup = (req, res, next) => {
           pageTitle: 'Signup',
           errorMessage: errors.array(),
           oldInput: req.body,
+          validationErrors: errors.array(),
         });
   }
   const email = req.body.email;

@@ -57,9 +57,9 @@ routes.post('/login',
     authorizationController.postLogin);
 routes.post('/signup',
     validateEmail(),
+    validateExistingEmail(),
     validatePassword(),
     validateConfirmPassword(),
-    validateExistingEmail(),
     authorizationController.postSignup);
 routes.post('/logout', authorizationController.postLogout);
 routes.get('/reset/:token', authorizationController.getNewPassword);
