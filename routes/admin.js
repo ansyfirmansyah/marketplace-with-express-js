@@ -10,7 +10,8 @@ const validateTitle = () => {
   return body('title')
       .trim()
       .isLength({min: 1}).withMessage('Title is required.')
-      .isAlphanumeric().withMessage('Title is must be an alphanumeric.');
+      .isAlphanumeric('en-US', {ignore: ' '})
+      .withMessage('Title is must be an alphanumeric.');
 };
 
 const validateImageUrl = () => {
