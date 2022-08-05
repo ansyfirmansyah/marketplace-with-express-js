@@ -33,7 +33,7 @@ const validateConfirmPassword = () => {
 const validateEmail = () => {
   return check(
       'email')
-      .normalizeEmail()
+      .normalizeEmail({gmail_remove_dots: false})
       .isEmail()
       .withMessage('Invalid Email.');
 };
@@ -41,7 +41,7 @@ const validateEmail = () => {
 const validateExistingEmail = () => {
   return check(
       'email')
-      .normalizeEmail()
+      .normalizeEmail({gmail_remove_dots: false})
       .custom(async (value) => {
         const user = await User.findOne({
           email: value,
