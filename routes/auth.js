@@ -60,8 +60,7 @@ routes.post('/signup',
     validatePassword(),
     validateConfirmPassword(),
     validateExistingEmail(),
-    authorizationController.postSignup,
-);
+    authorizationController.postSignup);
 routes.post('/logout', authorizationController.postLogout);
 routes.get('/reset/:token', authorizationController.getNewPassword);
 routes.get('/reset', authorizationController.getReset);

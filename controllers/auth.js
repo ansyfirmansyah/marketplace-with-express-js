@@ -17,6 +17,7 @@ exports.getLogin = (req, res, next) => {
     pageTitle: 'Login',
     path: '/login',
     errorMessage: req.flash('error'),
+    oldInput: null,
   });
 };
 
@@ -25,6 +26,7 @@ exports.getSignup = (req, res, next) => {
     path: '/signup',
     pageTitle: 'Signup',
     errorMessage: req.flash('error'),
+    oldInput: null,
   });
 };
 
@@ -36,6 +38,7 @@ exports.postLogin = (req, res, next) => {
           path: '/login',
           pageTitle: 'Login',
           errorMessage: errors.array(),
+          oldInput: req.body,
         });
   }
   const email = req.body.email;
@@ -75,6 +78,7 @@ exports.postSignup = (req, res, next) => {
           path: '/signup',
           pageTitle: 'Signup',
           errorMessage: errors.array(),
+          oldInput: req.body,
         });
   }
   const email = req.body.email;
