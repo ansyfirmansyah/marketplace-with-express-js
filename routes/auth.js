@@ -12,6 +12,7 @@ const validatePassword = () => {
   return body(
       'password',
       'Password must be at least 8 chars and contain a number.')
+      .trim()
       .isLength({min: 8})
       .matches(/\d/);
 };
@@ -20,6 +21,7 @@ const validateConfirmPassword = () => {
   return body(
       'confirmPassword',
       'Confirm Password must equal with Password.')
+      .trim()
       .custom((value, {req}) => {
         if (value !== req.body.password) {
           return false;
@@ -31,6 +33,7 @@ const validateConfirmPassword = () => {
 const validateEmail = () => {
   return check(
       'email')
+      .normalizeEmail()
       .isEmail()
       .withMessage('Invalid Email.');
 };
@@ -38,6 +41,7 @@ const validateEmail = () => {
 const validateExistingEmail = () => {
   return check(
       'email')
+      .normalizeEmail()
       .custom(async (value) => {
         const user = await User.findOne({
           email: value,
