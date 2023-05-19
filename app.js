@@ -41,8 +41,14 @@ app.use((req, res, next) => {
   } else {
     User.findById(req.session.user._id)
         .then((user) => {
+          if (!user) {
+            return next();
+          }
           req.user = user;
           next();
+        })
+        .catch((err) => {
+          return next(err);
         });
   }
 });
@@ -56,7 +62,16 @@ app.use((req, res, next) => {
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
+app.get('/500', errorController.error);
 app.use(errorController.notfound);
+
+// Handling error with error handling middleware
+app.use((error, req, res, next) => {
+  res.status(500).render('500', {
+    pageTitle: 'Error!',
+    path: '/500',
+  });
+});
 
 mongoose.connect(process.env.MONGO_URL)
     .then((result) => {
